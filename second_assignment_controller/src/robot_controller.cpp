@@ -119,29 +119,54 @@ std::vector<std::string> change_direction (std::vector<float> dist_vector, float
 
 bool obtaincoeffCallback (second_assignment_controller::ChangeVel::Request &req, second_assignment_controller::ChangeVel::Response &res){ // function that is
 // executed every time that a request message of the service at issue is received
-    if (req.command == 'd'){
+    if (req.command == 's'){
         if (coeff_l == 0.0 && coeff_a == 0.0){
             coeff_l = 1.0;
             coeff_a = 1.0;
-            res.action = "velocity incremented";
+            res.action = "motion started";
+        }
+        else{
+            res.action = "WARNING: cannot start the motion: motion already started";
+        }
+    }
+
+    else if (req.command == 'd'){
+        if (coeff_l == 0.0){
+            res.action = "WARNING: start the motion first";
         }
         else{
             coeff_l = coeff_l*1.5;
-            coeff_a = coeff_a*1.2;
-            res.action = "velocity incremented";
+            res.action = "linear velocity incremented";
         }
     }
-    if (req.command == 'a'){
+    else if (req.command == 'a'){
         if (coeff_l == 0.0){
-            res.action = "cannot decrement the velocity";
+            res.action = "WARNING: start the motion first";
         }
         else{
             coeff_l = coeff_l/1.5;
-            coeff_a = coeff_a/1.2;
-            res.action = "velocity decremented";
+            res.action = "linear velocity decremented";
         }
     }
-    if (req.command == 'r'){
+    else if (req.command == 'c'){
+        if (coeff_a == 0.0){
+            res.action = "WARNING: start the motion first";
+        }
+        else{
+            coeff_a = coeff_a*1.2;
+            res.action = "angular velocity incremented";
+        }
+    }
+    else if (req.command == 'z'){
+        if (coeff_a == 0.0){
+            res.action = "WARNING: start the motion first";
+        }
+        else{
+            coeff_a = coeff_a/1.2;
+            res.action = "angular velocity decremented";
+        }
+    }
+    else if (req.command == 'r'){
         coeff_l = 0.0;
         coeff_a = 0.0;
         res.action = "position and velocity reset";
@@ -251,4 +276,3 @@ ros::ServiceServer server1 = nh.advertiseService("/change_vel", obtaincoeffCallb
 ros::spin(); // continuously check if there is some published message on the topic
 return 0;
 }
-
