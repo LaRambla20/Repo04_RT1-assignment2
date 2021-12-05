@@ -12,12 +12,16 @@ Inside the second package there are instead three folders, a text file and a fil
 * `package.xml`: XML file that defines properties about the package such as the package name, version numbers, authors, maintainers, and dependencies on other catkin packages
 
 ## How to install and run
-The installation of the two packages contained in this repository is carried out by:
-* cloning it in the `src` folder of the user's ROS workspace with the command:
+The installation of the two packages contained in this repository is carried out by following these two simple steps:
+* clone this remote repository in the `src` folder of your ROS workspace with the command:
 ```bash
-$ git clone 
+$ git clone https://github.com/LaRambla20/Repo04_RT1-assignment2.git
 ```
-Since in ROS all nodes need the core node to be active and running in order to work, the first thing to do is to open the terminal, move in the ROS workspa:
+* build your ROS workspace with the command:
+```bash
+$ catkin_make
+```
+As far as the execution is concerned, since in ROS all nodes need the core node to be active and running, the first thing to do is to open the terminal, move to the ROS workspace and execute the command:
 ```bash
 $ roscore &
 ```
@@ -36,7 +40,7 @@ Finally the last thing to do is to run the GUI node, again by opening another sh
 $ rosrun second_assignment_controller robot_GUI_node
 ```
 
-### About the Simulator: Robot API
+### About the Simulator: stageros node
 
 The robot simulated in the simulator is controlled by an API that is designed to be as similar as possible to the [SR API][sr-api]. The features of the controlling API are the following:
 
