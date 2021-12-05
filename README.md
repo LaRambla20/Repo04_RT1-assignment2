@@ -6,13 +6,18 @@ The folder in which this README is contains two ROS packages, one named `second_
 
 Inside the second package there are instead three folders, a text file and a file with extension .xml:
 * `include`: folder that contains
-* `src`: folder that contains two C++ scripts (robot_controller.cpp and robot_GUI.cpp) implementing two nodes: one whose aim is to control the robot, the other whose aim is to interact with the user and to send requests to the first one
-* `srv`: folder that contains a custom ROS service (ChangeVel.srv) whose aim is to make the two previously-mentioned nodes communicate
+* `src`: folder that contains two C++ scripts (`robot_controller.cpp` and `robot_GUI.cpp`) implementing two nodes: one whose aim is to control the robot, the other whose aim is to interact with the user and to send requests to the first one
+* `srv`: folder that contains a custom ROS service (`ChangeVel.srv`) whose aim is to make the two previously-mentioned nodes communicate
 * `CMakeLists.txt`: text file that describes how to build the code and where to install it to
 * `package.xml`: XML file that defines properties about the package such as the package name, version numbers, authors, maintainers, and dependencies on other catkin packages
 
-## How to run
-Since in ROS all nodes need the core node to be active and running in order to work, the first thing to do is:
+## How to install and run
+The installation of the two packages contained in this repository is carried out by:
+* cloning it in the `src` folder of the user's ROS workspace with the command:
+```bash
+$ git clone 
+```
+Since in ROS all nodes need the core node to be active and running in order to work, the first thing to do is to open the terminal, move in the ROS workspa:
 ```bash
 $ roscore &
 ```
@@ -22,11 +27,13 @@ As noted above, in the proposed solution to the second assignment two main nodes
 $ rosrun stage_ros stageros $(rospack find second_assignment)/world/my_world.world
 ```
 As it can be seen from the command, in addition to the instruction to properly launch the simulation node, another file is linked. That is the file, contained in the `second_assignment` package, that specifies the properties of the simulated world.
-
-Python scripts can be run in the simulator using `run.py` and passing it the file name. In this particular case the command is the following:
-
+Once the simulator is running, the robot_controller_node can be executed. In order to do that another terminal window should be opened and the following line should be entered:
 ```bash
-$ python run.py assignment1.py
+$ rosrun second_assignment_controller robot_controller_node
+```
+Finally the last thing to do is to run the GUI node, again by opening another shell window and by executing the command:
+```bash
+$ rosrun second_assignment_controller robot_GUI_node
 ```
 
 ### About the Simulator: Robot API
