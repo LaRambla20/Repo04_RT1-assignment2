@@ -39,44 +39,12 @@ Finally the last thing to do is to run the GUI node, again by opening another sh
 ```bash
 $ rosrun second_assignment_controller robot_GUI_node
 ```
-
 ### About the Simulator: stageros node
-
-The robot simulated in the simulator is controlled by an API that is designed to be as similar as possible to the [SR API][sr-api]. The features of the controlling API are the following:
-
-SIMULATOR NODE: TOPICS AND SERVICES 
-
-**Motors**
-
-```python
-R.motors[0].m0.power = 25
-R.motors[0].m1.power = -25
-```
-
-**Grabber**
-
-
-**Vision**
-
-To help the robot find tokens and navigate, each token has markers stuck to it, as does each wall. The `R.see` method returns a list of all the markers the robot can see, as `Marker` objects. The robot can see markers around it within a certain distance.
-
-Each `Marker` object has the following attributes:
-
-* `info`: a `MarkerInfo` object describing the marker itself. Has the following attributes:
-  * `code`: the numeric code of the marker.
-  * `marker_type`: the type of object the marker is attached to (either `MARKER_TOKEN_GOLD`, `MARKER_TOKEN_SILVER` or `MARKER_ARENA`).
-  * `offset`: offset of the numeric code of the marker from the lowest numbered marker of its type. For example, token number 3 has the code 43, but offset 3.
-  * `size`: the size that the marker would be in the real game, for compatibility with the SR API.
-* `centre`: the location of the marker in polar coordinates, as a `PolarCoord` object. Has the following attributes:
-  * `length`: the distance from the centre of the robot to the object (in metres).
-  * `rot_y`: rotation about the Y axis in degrees.
-* `dist`: an alias for `centre.length`
-* `res`: the value of the `res` parameter of `R.see`, for compatibility with the SR API.
-* `rot_y`: an alias for `centre.rot_y`
-* `timestamp`: the time at which the marker was seen (when `R.see` was called).
-
-**Heading**
-
+After running the simulation node as shown above, a circuit and a robot inside it will appear on the screen. The simulator itself make some topics and services available for the control of the robot. As regards the topics, two of them are mainly used in the proposed solution:
+* `/base_scan`: topic on which the simulation node publishes the output of the robot laser scanners. The type of message sent on this topic is `sensor_msgs/LaserScan` and consists in several fields. Among them, the `ranges` field, which is a vector that contains the distances of the robot from the walls in an angular range from 0 to 180 degrees, will be exploited.
+* `/cmd_vel`: topic to which the simulation node is subscribed in order to receive commands to set the robot linear and angular velocity. The type of message sent on this topic is `geometry_msgs/Twist` and consists in two fields. They both are three dimensional vectors, but one specifies the linear velocity of the robot, the other its angular velocity. Among the elements of these two vectors the x component of the linear vector and the z component of the angular vector will be used in order to guide the robot along the circuit.  
+As for the built-in services of the simulation node instead, only one of them will be taken in consideration:
+* `/reset_position`: service provided by the `stageros` node that acts as a server node. The type of service message used for the service at issue is `std_srvs/Empty`. As the name suggests, every client node can issue an empty service request to the server in order to reset the robot position. Once the server finishes taking care of this operation, it sends back to the client an empty service response.
 
 ## Script goal
 Once the script is run, it will appear an arena with several square blocks (either golden or silver) and the simulated robot in the upper-left corner. The goal of the script is to guide the robot along the path defined by the golden blocks in counter-clockwise direction, making sure that it doesn't collide with them. Furthermore the robot has to grab the silver blocks that it encounters along the way and move them behind itself.
