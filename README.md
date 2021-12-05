@@ -6,7 +6,7 @@ The folder in which this README is contains two ROS packages, one named `second_
 
 Inside the second package there are instead three folders, a text file and a file with extension .xml:
 * `include`: folder that contains
-* `src`: folder that contains two C++ scripts (`robot_controller.cpp` and `robot_GUI.cpp`) implementing two nodes: one whose aim is to control the robot, the other whose aim is to interact with the user and to send requests to the first one
+* `src`: folder that contains two C++ scripts (`robot_controller.cpp` and `robot_GUI.cpp`) implementing two nodes: one whose aim is to control the robot and to carry out some operations under request; the other whose aim is to interact with the user and to send requests to the first one
 * `srv`: folder that contains a custom ROS service (`ChangeVel.srv`) whose aim is to make the two previously-mentioned nodes communicate
 * `CMakeLists.txt`: text file that describes how to build the code and where to install it to
 * `package.xml`: XML file that defines properties about the package such as the package name, version numbers, authors, maintainers, and dependencies on other catkin packages
@@ -46,8 +46,8 @@ After running the simulation node as shown above, a circuit and a robot inside i
 As for the built-in services of the simulation node instead, only one of them will be taken in consideration:
 * `/reset_position`: service provided by the `stageros` node that acts as a server node. The type of service message used for the service at issue is `std_srvs/Empty`. As the name suggests, every client node can issue an empty service request to the server in order to reset the robot position. Once the server finishes taking care of this operation, it sends back to the client an empty service response.
 
-## Script goal
-Once the script is run, it will appear an arena with several square blocks (either golden or silver) and the simulated robot in the upper-left corner. The goal of the script is to guide the robot along the path defined by the golden blocks in counter-clockwise direction, making sure that it doesn't collide with them. Furthermore the robot has to grab the silver blocks that it encounters along the way and move them behind itself.
+## Nodes goal
+As stated above, the simulation environment opened by the `stageros` node is a circuit delimited by walls. The simulated robot is spawned inside this perimeter near its bottom-right corner. Among the two implemented nodes, the goal of the control node is to guide the robot along the path in clockwise direction, making sure that it doesn't collide with the walls. Furthermore it should meet the requests of the other node and send to it responses. Whereas the GUI node is aimed at constantly asking and waiting for an input from the user, which can either ask to increment or decrement the velocity, or to put the robot in the initial position. Once an input has been detected, it should then issue a correspondent request to the first node. The final behaviour of the robot should therefore be to autonomously drive between the walls and to increment/decrement its velocities or resetting its positions under the request of the user.
 
 ## Idea - Robot behaviour
 In order to achieve the goal stated above, the simulated robot has to:
