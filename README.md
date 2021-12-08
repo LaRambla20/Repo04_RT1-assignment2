@@ -52,15 +52,24 @@ As stated above, the simulation environment opened by the `stageros` node is a c
 ## Implementation - Description
 Since the primary goal of the robot is to avoid colliding with the walls, the idea is first of all to check if there are walls at a dangerous distance. Then, if the answer is yes, the robot will be instructed to the direction of the motion according to the position of the critical obstacle.  
 As far as the detection task is concerned, the output of the laser scanner is used. As mentioned above, this information is sent on the `/base_scan` topic by the simulation node. The controller node then subscribes to the topic at issue and continuously checks the message sent on it. In particular the field of interest is named `ranges` and contains 720 elements that are the distances between the robot and the walls in an angular range that goes from 0 to 180 degrees. Given the great amount of data, a basilar processing of them is carried out. In order to do that, the vector is divided in 5 sub-vectors, each one defining a different region:
-* Region 1 - right region: region that ranges from 0 to 36 degrees
-* Region 2 - front-right region: region that ranges from 36 to 72 degrees
-* Region 3 - front region: region that ranges from 72 to 108 degrees
-* Region 4 - front-left region: region that ranges from 108 to 144 degrees
-* Region 5 - left region: region that ranges from 144 to 180 degrees
-<!-- end the list -->
+* `Region 1 - right region`: region that ranges from 0 to 36 degrees
+* `Region 2 - front-right region`: region that ranges from 36 to 72 degrees
+* `Region 3 - front region`: region that ranges from 72 to 108 degrees
+* `Region 4 - front-left region`: region that ranges from 108 to 144 degrees
+* `Region 5 - left region`: region that ranges from 144 to 180 degrees
+
 This division is shown in the following picture:  
 ![Robot_RT1_2](https://user-images.githubusercontent.com/91536387/145257341-ecc88710-b918-49a9-a9f0-21e75f4e2f3f.png)  
-That been done, it is convenient to identify a representative distance for each region. For this reason the minimum distance among all the distances of each region is extracted. The five retrieved values are then used to check the presence of dangerous walls within the visual field of the robot and eventually to avoid them. In particular according to the distances belonging to the three frontal regions (frontal, front-left and front-right area), different states are defined, each one related to a different action. Critical states are further divided in substates, by checking the two side areas:
+That been done, it is convenient to identify a representative distance for each region. For this reason the minimum distance among all the distances of each region is extracted. The five retrieved values are then used to check the presence of dangerous walls within the visual field of the robot and eventually to avoid them. In particular, according to the distances belonging to the three frontal regions (`front`, `front-left` and `front-right` area), different states are defined, each one related to a different action. Critical states are then further divided in substates, by checking the two side areas:
+* `state 1 - "nothing"`: occurs if no wall is within dangerous distance. The robot is instructed to go forward
+* `state 2 - "front"`: occurs if the minimum distance belonging to the front region is less than the threshold `DAN_DISTANCE`. Since given this information it is not really clear where the robot should turn, the side areas are checked as well and three substates are defined:
+  * `substate a - "right" `: occurs in the second state if the minimum distance belonging to the right region is less than the threshold `DAN_DISTANCE`. The robot is instructed to turn left a little.
+  * `substate b - "left" `: occurs in the second state if the minimum distance belonging to the left region is less than the threshold `DAN_DISTANCE`. The robot is instructed to turn right a little.
+  * `substate c - "left and right" `: occurs in the second state if both the minimum distance belonging to the right region and the minimum distance belonging to the left region are less than the threshold `DAN_DISTANCE`. The robot is instructed to turn left a little.
+
+* `state 3 - "front-right"`: occurs if the minimum distance belonging to the front-right region is less than the threshold `DAN_DISTANCE`. The robot is instructed to turn left a little.
+* `state 4 - "front-left"`: occurs if the minimum distance belonging to the front-left region is less than the threshold `DAN_DISTANCE`. The robot is instructed to turn right a little.
+
 visual field 80 degrees wide, circular sector ranging from to
 
 ## Implementation - Code
