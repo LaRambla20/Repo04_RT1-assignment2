@@ -69,6 +69,24 @@ That been done, it is convenient to identify a representative distance for each 
 
 * `state 3 - "front-right"`: occurs if the minimum distance belonging to the front-right region is less than the threshold `DAN_DISTANCE`. The robot is instructed to turn left a little.
 * `state 4 - "front-left"`: occurs if the minimum distance belonging to the front-left region is less than the threshold `DAN_DISTANCE`. The robot is instructed to turn right a little.
+* `state 5 - "front and front-right"`: occurs if both the minimum distance belonging to the front region and the minimum distance belonging to the front-right region are less than the threshold `DAN_DISTANCE`. The robot is instructed to turn left a little.
+* `state 6 - "front and front-left"`: occurs if both the minimum distance belonging to the front region and the minimum distance belonging to the front-left region are less than the threshold `DAN_DISTANCE`. The robot is instructed to turn right a little.
+* `state 7 - "front and front-right and front-left"`: occurs if the minimum distances belonging to all the three frontal regions are less than the threshold `DAN_DISTANCE`. Since given this information it is not really clear where the robot should turn, the side areas are checked as well and three substates are defined:
+  * `substate a - "right"`: occurs in the seventh state if the minimum distance belonging to the right region is less than the threshold `DAN_DISTANCE`. The robot is instructed to turn left a little.
+  * `substate b - "left"`: occurs in the seventh state if the minimum distance belonging to the left region is less than the threshold `DAN_DISTANCE`. The robot is instructed to turn right a little.
+  * `substate c - "left and right"`: occurs in the seventh state if both the minimum distance belonging to the right region and the minimum distance belonging to the left region are less than the threshold `DAN_DISTANCE`. The robot is instructed to turn left a little.
+
+The linear and angular velocities that are needed to accomplish all these tasks are published by the controller node on the topic `cmd_vel`. The `stageros` node is then responsible for setting them in the simulation.  
+Finally, since the `robot_controller_node` already has access to the `cmd_vel` topic, it is also instructed to act as a server with respect to a service aimed at meeting the requests of the user. In particular, by modifying two coefficients under request (`coeff_l`an:  
+- start the motion
+- increment/decrement the robot velocities
+- reset both the robot position and the velocities. 
+The service used to this end isn't made available by the simulation node, so it is created. Its structure consists in a request message made of a char variable () and a response message made of a string variable (). 
+Before passing on to the GUI node a representation of the control node and of its communication channels with the simulation node is hereafter shown:
+Regarding the GUI node, its operating principle  is very simple. It asks the user for a command and waits until something is provided. The recognized commands are:
+- "s" start the robot motion
+If the string entered is among these commands the node sends a request message containing the correspondent character to the server node and prints the latter response. Otherwise a warning message is issued on the screen. These actions are ciclically repeated until a "q" is entered by the user.  These command makes the node terminate. 
+
 
 visual field 80 degrees wide, circular sector ranging from to
 
@@ -182,4 +200,4 @@ Another similiar issue concerns the rotation of the robot once it has grabbed a 
 A possible improvement could be to implement a solution to this problem that does not rely on the fact that the walls are made of separate blocks. Under these circumstances the check on the number of golden blocks around the robot could not be run and the second approach that is here implemented could result in the robot going back. In order to avoid that, the method `R.heading` of the class `Robot` could be used. As a matter of fact, this method could allow the robot to keep track of its orientation and, therefore, to understand when an odd change of orientation occurs.
 
 ## System Issues
-When the robot is perfectly aligned with a silver token that it has detected, due to the bulk of its grabber, it never manages to get close to the token enough to grab it. This, however, it is not a script issue, but a simulator issue.  
+No particular issues were found.
