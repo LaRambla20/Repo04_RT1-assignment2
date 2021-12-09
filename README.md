@@ -1,5 +1,5 @@
 # Second Reasearch Track 1 Assignment
-The folder in which this README is contains two ROS packages, one named `second_assignment`, the other named `second_assignment_controller`, and a folder with the package documentation related to the latter. The first package is just composed by a folder, a text file and a file with extension .xml:
+The folder in which this README is contains two ROS packages, one named `second_assignment`, the other named `second_assignment_controller`. The first package is just composed by a folder, a text file and a file with extension .xml:
 * `world`: folder that contains information about the characteristics of the world that is run in the simulator
 * `CMakeLists.txt`: text file that describes how to build the code and where to install it to
 * `package.xml`: XML file that defines properties about the package such as the package name, version numbers, authors, maintainers, and dependencies on other catkin packages  
@@ -97,33 +97,38 @@ Regarding the `robot_gui_node`, its operating principle  is very simple. It asks
 If the string entered is not among these commands a warning message is issued on the screen. Otherwise, for the first six elements of this list the node sends a request message containing the correspondent character to the server node and prints the latter's response. These actions are ciclically repeated until the command `q`, which makes the node terminate, is entered by the user.
 
 ## Implementation - controller node code
-The C++ script related to the controller node is composed of a main function, 2 callback functions and 2 "regular" functions. The first callback function refers to the subscriber task accomplished by the node and is called every time that a message is published on the `/base_scan` topic. The second one refers instead to the server task carried out by the node and is called every time that a request message of the service `/change_vel` is issued by the client.
+The C++ script related to the controller node is composed of a main function, 2 call-back functions and 2 "regular" functions. The first callback function refers to the subscriber task accomplished by the node and is called every time that a message is published on the `/base_scan` topic. The second one refers instead to the server task carried out by the node and is called every time that a request message of the service `/change_vel` is issued by the client.
 
 ### Main
 The main function can be described in pseudocode as follows:
-```python
-
+```cpp
+initialize the node with the name `robot_controller_node`
+setup the NodeHandle
+Initialize the publisher that publishes on the `/cmd_vel` topic
+Initialize and define the subscriber that subscribes to the `base_scan` topic and assign the `robotCallback` call-back function
+Initialize and define the server that answers to requests belonging to the `/change_vel` service and assign the `obtaincoeffCallback` call-back function
+Spin to allow the call-back functions to be called whenever a message arrives on the correspondent topic or service 
 ```
 
-### Callback functions
+### Call-back functions
 The first callback function can be described in pseudocode as follows:
-```python
+```cpp
 drive(speed, seconds):
 	set the speed of both robot wheels to a certain speed for a certain number of seconds
 ```
 The second callback function can be described in pseudocode as follows:
-```python
+```cpp
 turn(speed, seconds):
 	set the speed of one of the robot wheels to a certain speed and the other to the opposite of that speed for a certain number of seconds
 ```
 ### "Regular" functions
 The first function can be described in pseudocode as follows:
-```python
+```cpp
 drive(speed, seconds):
 	set the speed of both robot wheels to a certain speed for a certain number of seconds
 ```
 The second function can be described in pseudocode as follows:
-```python
+```cpp
 turn(speed, seconds):
 	set the speed of one of the robot wheels to a certain speed and the other to the opposite of that speed for a certain number of seconds
 ```
@@ -133,6 +138,9 @@ As regards the GUI node instead, its structure is much simpler since it consists
 
 ### Main
 The main function can be described in pseudocode as follows:
+```cpp
+
+```
 
 ## System Limitations and Possible Improvements
 As far as the limitations of the script are concerned, mainly two of them can be found. The first one is that the robot, once it has released a silver token, steps back in order to avoid hitting that token while resetting its orientation. This could be a problem if the grabbed silver token was very close to a golden wall, because, while performing the step back, the robot could collide with that wall. A possible solution could be to check the distance from the golden walls as a priority with respect to the silver tokens detection. In this manner, however, it would be possible that silver blocks that are very close to the walls are not picked up by the robot.  
