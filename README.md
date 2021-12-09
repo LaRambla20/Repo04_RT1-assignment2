@@ -102,11 +102,11 @@ The C++ script related to the controller node is composed of a main function, 2 
 ### Main
 The main function can be described in pseudocode as follows:
 ```cpp
-initialize the node with the name `robot_controller_node`
+initialize the node with the name "robot_controller_node"
 setup the NodeHandle
-Initialize the publisher that publishes on the `/cmd_vel` topic
-Initialize and define the subscriber that subscribes to the `base_scan` topic and assign the `robotCallback` call-back function
-Initialize and define the server that answers to requests belonging to the `/change_vel` service and assign the `obtaincoeffCallback` call-back function
+Initialize the publisher that publishes on the "/cmd_vel" topic
+Initialize and define the subscriber that subscribes to the "/base_scan" topic and assign the "robotCallback" call-back function
+Initialize and define the server that answers to requests belonging to the "/change_vel" service and assign the "obtaincoeffCallback" call-back function
 Spin to allow the call-back functions to be called whenever a message arrives on the correspondent topic or service 
 ```
 
@@ -124,13 +124,54 @@ turn(speed, seconds):
 ### "Regular" functions
 The first function can be described in pseudocode as follows:
 ```cpp
-drive(speed, seconds):
-	set the speed of both robot wheels to a certain speed for a certain number of seconds
+float find_minimum (vector of floats, size of the vector){
+	find the minimum value among the elements of the vector passed as input
+	return the retrieved minimum element
+}
 ```
 The second function can be described in pseudocode as follows:
 ```cpp
-turn(speed, seconds):
-	set the speed of one of the robot wheels to a certain speed and the other to the opposite of that speed for a certain number of seconds
+vector of strings change_direction (vector of floats, pointer to the linear velocity of the robot, pointer to the angular velocity of the robot){
+	initialize the substate description
+	if there is no obstacle at a dangerous distance
+		update the state description
+		go straight a little
+	if there is an obstacle at a dangerous distance in the front region
+		update the state description
+		if there is an obstacle at a dangerous distance in the right region
+			update the substate description
+			turn left a little
+		else if there is an obstacle at a dangerous distance in the left region
+			update the substate description
+			turn right a little
+		else
+			turn left a little
+	if there is an obstacle at a dangerous distance in the front-right region
+		update the state description
+		turn left a little
+	if there is an obstacle at a dangerous distance in the front-left region
+		update the state description
+		turn right a little
+	if there is an obstacle at a dangerous distance in both the front region and the front-right region
+		update the state description
+		turn left a little
+	if there is an obstacle at a dangerous distance in both the front region and the front-left region
+		update the state description
+		turn right a little
+	if there is an obstacle at a dangerous distance in both the front region, the front-right region and the front-left region
+		update the state description
+		if there is an obstacle at a dangerous distance in the right region
+			update the substate description
+			turn left a little
+		else if there is an obstacle at a dangerous distance in the left region
+			update the substate description
+			turn right a little
+		else
+			turn left a little
+	if there is an obstacle at a dangerous distance in both the front-right region and the front-left region
+		update the state description
+		go straight a little
+}
 ```
 
 ## Implementation - GUI node code
