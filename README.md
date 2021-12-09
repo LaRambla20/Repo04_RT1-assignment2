@@ -97,7 +97,7 @@ Regarding the `robot_gui_node`, its operating principle  is very simple. It asks
 If the string entered is not among these commands a warning message is issued on the screen. Otherwise, for the first six elements of this list the node sends a request message containing the correspondent character to the server node and prints the latter's response. These actions are ciclically repeated until the command `q`, which makes the node terminate, is entered by the user.
 
 ## Implementation - controller node code
-The C++ script related to the controller node is composed of a main function, 2 call-back functions and 2 "regular" functions. The first callback function refers to the subscriber task accomplished by the node and is called every time that a message is published on the `/base_scan` topic. The second one refers instead to the server task carried out by the node and is called every time that a request message of the service `/change_vel` is issued by the client.
+The C++ script related to the controller node is composed of a main function, 2 call-back functions and 2 "regular" functions. The first call-back function refers to the server task carried out by the node and is called every time that a request message of the service `/change_vel` is issued by the client. The second one refers instead to the subscriber task accomplished by the node and is called every time that a message is published on the `/base_scan` topic.
 
 ### Main
 The main function can be described in pseudocode as follows:
@@ -113,13 +113,46 @@ spin to allow the call-back functions to be called whenever a message arrives on
 ### Call-back functions
 The first callback function can be described in pseudocode as follows:
 ```cpp
-drive(speed, seconds):
-	set the speed of both robot wheels to a certain speed for a certain number of seconds
+bool obtaincoeffCallback (request message related to the service "/change_vel", response message related to the service "/change_vel"){
+	if the request message is the command "s"
+		if both cefficients are 0
+			assign value 1 to both the coefficents
+			fill the response message with "motion started"
+		else
+			fill the response message with a warning
+	else if the request message is the command "d"
+		if the coefficient related to the linear velocity is 0
+			fill the response message with a warning
+		else
+			multiply the coefficient related to the linear velocity by 1.5
+			fill the response message with "linear velocity incremented"
+	else if the request message is the command "a"
+		if the coefficient related to the linear velocity is 0
+			fill the response message with a warning
+		else
+			divide the coefficient related to the linear velocity by 1.5
+			fill the resposne message with "linear velocity decremented"
+	else if the request message is the command "c"
+		if the coefficient related to the angular velocity is 0
+			fill the response message with a warning
+		else
+			multiply the coefficient related to the angular velocity by 1.2
+			fill the response message with "angular velocity incremented"
+	else if the request message is the command "z"
+		if the coefficient related to the angular velocity is 0
+			fill the response message with a warning
+		else
+			divide the coefficient related to the angular velocity by 1.2
+			fill the resposne message with "angular velocity decremented"
+	else if the request message is the command "r"
+		assign value 0 to both the coefficents
+		fill the response message with "position and velocity reset"
+}
 ```
 The second callback function can be described in pseudocode as follows:
 ```cpp
-turn(speed, seconds):
-	set the speed of one of the robot wheels to a certain speed and the other to the opposite of that speed for a certain number of seconds
+void robotCallback(message retrieved by the "/base_scan" topic){
+}
 ```
 ### "Regular" functions
 The first function can be described in pseudocode as follows:
