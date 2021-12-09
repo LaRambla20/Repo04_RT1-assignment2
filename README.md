@@ -77,23 +77,46 @@ That been done, it is convenient to identify a representative distance for each 
   * `substate c - "left and right"`: occurs in the seventh state if both the minimum distance belonging to the right region and the minimum distance belonging to the left region are less than the threshold `DAN_DISTANCE`. The robot is instructed to turn left a little.
 
 The linear and angular velocities that are needed to accomplish all these tasks are published by the controller node on the topic `cmd_vel`. The `stageros` node is then responsible for setting them in the simulation.  
-Finally, since the `robot_controller_node` already has access to the `cmd_vel` topic, it is also instructed to act as a server with respect to a service aimed at meeting the requests of the user. In particular, by modifying two coefficients under request (`coeff_l`an:  
-- start the motion
-- increment/decrement the robot velocities
-- reset both the robot position and the velocities. 
-The service used to this end isn't made available by the simulation node, so it is created. Its structure consists in a request message made of a char variable () and a response message made of a string variable (). 
-Before passing on to the GUI node a representation of the control node and of its communication channels with the simulation node is hereafter shown:
-Regarding the GUI node, its operating principle  is very simple. It asks the user for a command and waits until something is provided. The recognized commands are:
-- "s" start the robot motion
-If the string entered is among these commands the node sends a request message containing the correspondent character to the server node and prints the latter response. Otherwise a warning message is issued on the screen. These actions are ciclically repeated until a "q" is entered by the user.  These command makes the node terminate. 
+Finally, since the `robot_controller_node` already has access to the `cmd_vel` topic, it is also instructed to act as a server with respect to a service aimed at meeting the requests of the user. In particular, by modifying two coefficients under request (`coeff_l` and `coeff_a`), it can:  
+* start the motion
+* increment/decrement the robot velocities
+* reset both the robot position and the velocities.
 
+The service used to this end is not made available by the simulation node, so it is created. Its structure consists in a request message made of a char variable (`command`) and a response message made of a string variable (`action`). 
+Before passing on to the GUI node, a representation of the controller node and of the communication channels that connects it with the simulation node is hereafter shown:  
+![Rqt_Graph_cut](https://user-images.githubusercontent.com/91536387/145423031-db96b237-c835-47a8-bc22-20a73fab4720.png)  
+Regarding the `robot_gui_node`, its operating principle  is very simple. It asks the user for a command and waits until something is provided. The recognized commands are:
+* `s`: start the robot motion
+* `d`: increment the robot linear velocity
+* `a`: decrement the robot linear velocity
+* `c`: increment the robot angular velocity
+* `z`: decrement the robot angular velocity
+* `r`: reset the robot position and velocities
+* `q`: quit the GUI node
 
-visual field 80 degrees wide, circular sector ranging from to
+If the string entered is not among these commands a warning message is issued on the screen. Otherwise, for the first six elements of this list the node sends a request message containing the correspondent character to the server node and prints the latter's response. These actions are ciclically repeated until the command `q`, which makes the node terminate, is entered by the user.
 
-## Implementation - Code
-The idea presented above was implemented with a python script structured in a main function and six additional functions: `drive(speed, seconds)`, `turn(speed, seconds)`, `check_dangerous_tokens()`, `count_tokens()`, `change_direction(n_left_tokens, n_right_tokens)`, `detect_silver_tokens()`.
+## Implementation - controller node code
+The C++ script related to the controller node is composed of a main function, 2 callback functions and 2 "regular" functions. The first callback function refers to the subscriber task accomplished by the node and is called every time that a message is published on the `/base_scan` topic. The second one refers instead to the server task carried out by the node and is called every time that a request message of the service `/change_vel` is issued by the client.
 
-### Functions
+### Main
+The main function can be described in pseudocode as follows:
+```python
+
+```
+
+### Callback functions
+The first callback function can be described in pseudocode as follows:
+```python
+drive(speed, seconds):
+	set the speed of both robot wheels to a certain speed for a certain number of seconds
+```
+The second callback function can be described in pseudocode as follows:
+```python
+turn(speed, seconds):
+	set the speed of one of the robot wheels to a certain speed and the other to the opposite of that speed for a certain number of seconds
+```
+### "Regular" functions
 The first function can be described in pseudocode as follows:
 ```python
 drive(speed, seconds):
@@ -104,95 +127,12 @@ The second function can be described in pseudocode as follows:
 turn(speed, seconds):
 	set the speed of one of the robot wheels to a certain speed and the other to the opposite of that speed for a certain number of seconds
 ```
-The third function can be described in pseudocode as follows:
-```python
-check_dangerous_tokens():
-	initialize the number of dangerous golden tokens to 0
-	retrieve the tokens around the robot within a certain distance with the R.see method
-	for i spanning the tokens just detected:
-		if (the token is gold) and (the distance from the robot is less than or equal to dan_th=0.9) and (the angular displacement between the robot and the token is between -per_dan_th=-40 and per_dan_th=40):
-			increment the number of dangerous golden tokens
-	return the number of dangerous golden tokens
-```
-The fourth function can be described in pseudocode as follows:
-```python
-count_tokens():
-	initialize the number of near golden tokens on the left to 0
-	initialize the number of near golden tokens on the right to 0
-	retrieve the tokens around the robot within a certain distance with the R.see method
-	for i spanning the tokens just detected:
-		if (the token is gold) and (the distance from the robot is less than or equal to near_th=1.6) and (the angular displacement between the robot and the token is between -per_near_th=-135 and per_near_th=135):
-			if the angualar displacement between the robot and the token is less than or equal to 0:
-				increment the number of near golden tokens on the left
-			else:
-				increment the number of near golden tokens on the right
-	return the number of near golden tokens on the left and the number of near golden tokens on the right
-```
-The fifth function can be described in pseudocode as follows:
-```python
-change_direction(n_left_tokens, n_right_tokens):
-	initialize the nearest wall distance to 100
-	if the number of left tokens is greater than the number of right tokens:
-		turn right a little
-	elif the number of left tokens is less than the number of right tokens:
-		turn left a little
-	elif the number of left tokens is equal to the number of right tokens:
-		retrieve the tokens around the robot within a certain distance with the R.see method
-		for i spanning the tokens just detected
-			if (the token is gold) and ((the angular displacement between the robot and the token is between -per_wall_th2=-105 and -per_wall_th1=-75) or (the angular displacement between the robot and the token is between per_wall_th1=75 and per_wall_th2=105)):
-				if the distance from the robot is less than or equal to the nearest wall distance:
-					update the nearest wall distance
-					update the nearest wall angular displacement
-		if the nearest wall angular displacement is less than or equal to 0:
-			turn right a little
-		else:
-			turn left a little
-```
-The sixth function can be described in pseudocode as follows:
-```python
-detect_silver_tokens():
-	initialize the distance from the detected silver token to 100
-	retrieve the tokens around the robot within a certain distance with the R.see method
-	for i spanning the tokens just detected:
-		if (the token is silver) and (the distance from the robot is less than or equal to sil_th=1.2) and (the angular displacement between the robot and the token is between -per_sil_th=-90 and per_sil_th=90):
-			update the detected silver token distance
-			update the detected silver token angular displacement
-	if the detected silver token distance is still 100:
-		return -1 and -1
-	else:
-	return the detected silver token distance and the detected silver token angular displacement
-```
+
+## Implementation - GUI node code
+As regards the GUI node instead, its structure is much simpler since it consists in only the main function.
 
 ### Main
 The main function can be described in pseudocode as follows:
-
-```python
-while 1
-	go forward a bit, calling the drive function
-	retrieve the distance and the angular displacement of the detected silver token, if any, calling the detect_silver_tokens function
-	if a silver token was detected:
-		if the distance from the silver token is greater than or equal to d_th=0.4:
-			while the angular displacement between the robot and the detected silver token is outside the range [-a_th=-2, a_th=2]:
-				if the angular displacement between the robot and the detected silver token is less than -a_th=-2:
-					turn left a little
-				if the angular displacement between the robot and the detected silver token is greater than a_th=2:
-					turn right a little
-				retrieve the distance and the angular displacement of the detected silver token, calling the detect_silver_tokens function
-		else:
-			Grab the silver token with the R.grab method
-			if the grabbing succeeds:
-				turn 180 degrees, using the R.heading method
-				release the silver token with the R.release method
-				step back to avoid hitting the silver token just released
-				turn 180 degrees to reset the orientation to the initial one, using the R.heading method
-	else:
-		retrieve the number of golden tokens dangerously near, calling the check_dangerous_tokens function
-		if the number of dangerous golden tokens is not 0:
-			while the number of dangerous golden tokens is not 0:
-				retrieve the number of near golden tokens on the left and the number of near golden tokens on the right, calling the count_tokens function
-				change the direction, calling the change_direction function
-				retrieve the number of golden tokens dangerously near, calling the check_dangerous_tokens function
-```
 
 ## System Limitations and Possible Improvements
 As far as the limitations of the script are concerned, mainly two of them can be found. The first one is that the robot, once it has released a silver token, steps back in order to avoid hitting that token while resetting its orientation. This could be a problem if the grabbed silver token was very close to a golden wall, because, while performing the step back, the robot could collide with that wall. A possible solution could be to check the distance from the golden walls as a priority with respect to the silver tokens detection. In this manner, however, it would be possible that silver blocks that are very close to the walls are not picked up by the robot.  
