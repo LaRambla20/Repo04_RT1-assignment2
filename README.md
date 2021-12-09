@@ -104,10 +104,10 @@ The main function can be described in pseudocode as follows:
 ```cpp
 initialize the node with the name "robot_controller_node"
 setup the NodeHandle
-Initialize the publisher that publishes on the "/cmd_vel" topic
-Initialize and define the subscriber that subscribes to the "/base_scan" topic and assign the "robotCallback" call-back function
-Initialize and define the server that answers to requests belonging to the "/change_vel" service and assign the "obtaincoeffCallback" call-back function
-Spin to allow the call-back functions to be called whenever a message arrives on the correspondent topic or service 
+initialize the publisher that publishes on the "/cmd_vel" topic
+initialize and define the subscriber that subscribes to the "/base_scan" topic and assign the "robotCallback" call-back function
+initialize and define the server that answers to requests belonging to the "/change_vel" service and assign the "obtaincoeffCallback" call-back function
+spin to allow the call-back functions to be called whenever a message arrives on the correspondent topic or service 
 ```
 
 ### Call-back functions
@@ -135,42 +135,45 @@ vector of strings change_direction (vector of floats, pointer to the linear velo
 	initialize the substate description
 	if there is no obstacle at a dangerous distance
 		update the state description
-		go straight a little
+		go straight
 	if there is an obstacle at a dangerous distance in the front region
 		update the state description
 		if there is an obstacle at a dangerous distance in the right region
 			update the substate description
-			turn left a little
+			turn left
 		else if there is an obstacle at a dangerous distance in the left region
 			update the substate description
-			turn right a little
+			turn right
 		else
-			turn left a little
+			turn left
 	if there is an obstacle at a dangerous distance in the front-right region
 		update the state description
-		turn left a little
+		turn left
 	if there is an obstacle at a dangerous distance in the front-left region
 		update the state description
-		turn right a little
+		turn right
 	if there is an obstacle at a dangerous distance in both the front region and the front-right region
 		update the state description
-		turn left a little
+		turn left
 	if there is an obstacle at a dangerous distance in both the front region and the front-left region
 		update the state description
-		turn right a little
+		turn right
 	if there is an obstacle at a dangerous distance in both the front region, the front-right region and the front-left region
 		update the state description
 		if there is an obstacle at a dangerous distance in the right region
 			update the substate description
-			turn left a little
+			turn left
 		else if there is an obstacle at a dangerous distance in the left region
 			update the substate description
-			turn right a little
+			turn right
 		else
-			turn left a little
+			turn left
 	if there is an obstacle at a dangerous distance in both the front-right region and the front-left region
 		update the state description
-		go straight a little
+		go straight
+	else
+		update the state description
+	return a vector containing both the state description and the substate description
 }
 ```
 
@@ -180,7 +183,14 @@ As regards the GUI node instead, its structure is much simpler since it consists
 ### Main
 The main function can be described in pseudocode as follows:
 ```cpp
+initialize the node with the name "robot_gui_node"
+setup the NodeHandle
+initialize and define a client that sends requests belonging to the "/change_vel" service
+define a custom service variable of type "ChangeVel" 
+initialize and define a client that sends requests belonging to the "/reset_positions" service
+define a custom service variable of type "Empty" 
 
+print 
 ```
 
 ## System Limitations and Possible Improvements
