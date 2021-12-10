@@ -239,16 +239,65 @@ while true
 		check if the server related to the "/change_vel" service is up and running
 		fill the request message of the variable "srv1" with the character "s"
 		make the first client call the related service with the variable "srv1"
-		print the server responnse on the screen
+		print the server response on the screen
 	else if the the entered command is "d"
 		check if the server related to the "/change_vel" service is up and running
 		fill the request message of the variable "srv1" with the character "d"
 		make the first client call the related service with the variable "srv1"
 		if the response is a warning
+			print the server response on the screen in red
 			assign 0 to the iterations counter related to the linear velocity of the robot
 		else
+			print the server response on the screen in green
 			increment the iterations counter related to the linear velocity of the robot
-
+	else if the the entered command is "a"
+		check if the server related to the "/change_vel" service is up and running
+		fill the request message of the variable "srv1" with the character "a"
+		make the first client call the related service with the variable "srv1"
+		if the response is a warning
+			print the server response on the screen in red
+			assign 0 to the iterations counter related to the linear velocity of the robot
+		else
+			print the server response on the screen in green
+			decrement the iterations counter related to the linear velocity of the robot
+	else if the the entered command is "c"
+		check if the server related to the "/change_vel" service is up and running
+		fill the request message of the variable "srv1" with the character "c"
+		make the first client call the related service with the variable "srv1"
+		if the response is a warning
+			print the server response on the screen in red
+			assign 0 to the iterations counter related to the angular velocity of the robot
+		else
+			print the server response on the screen in green
+			increment the iterations counter related to the angular velocity of the robot
+	else if the the entered command is "z"
+		check if the server related to the "/change_vel" service is up and running
+		fill the request message of the variable "srv1" with the character "z"
+		make the first client call the related service with the variable "srv1"
+		if the response is a warning
+			print the server response on the screen in red
+			assign 0 to the iterations counter related to the angular velocity of the robot
+		else
+			print the server response on the screen in green
+			decrement the iterations counter related to the angular velocity of the robot
+	else if the the entered command is "r"
+		check if the server related to the "/change_vel" service is up and running
+		fill the request message of the variable "srv1" with the character "r"
+		make the first client call the related service with the variable "srv1"
+		print the server response on the screen
+		assign 0 to both the iterations counters
+		check if the server related to the "/reset_position" service is up and running
+		make the second client call the related service with the variable "srv2"
+	else if the the entered command is "q"
+		exit
+	else
+		print "invalid command" on the screen
+	
+	if the iterations counter related to the linear velocity of the robot is greater than 3
+		issue a warning message on the screen
+	if the iterations counter related to the angular velocity of the robot is greater than 3
+		issue a warning message on the screen
+return
 ```
 
 ## System Limitations and Possible Improvements
