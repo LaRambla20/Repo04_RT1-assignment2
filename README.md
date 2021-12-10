@@ -5,14 +5,14 @@ The folder in which this README is contains two ROS packages, one named `second_
 * `package.xml`: XML file that defines properties about the package such as the package name, version numbers, authors, maintainers, and dependencies on other catkin packages  
 
 Inside the second package there are instead three folders, a text file and a file with extension .xml:
-* `include`: folder that contains
+* `include`: folder that is not used in this project
 * `src`: folder that contains two C++ scripts (`robot_controller.cpp` and `robot_GUI.cpp`) implementing two nodes: one whose aim is to control the robot and to carry out some operations under request; the other whose aim is to interact with the user and to send requests to the first one
 * `srv`: folder that contains a custom ROS service (`ChangeVel.srv`) whose aim is to make the two previously-mentioned nodes communicate
 * `CMakeLists.txt`: text file that describes how to build the code and where to install it to
 * `package.xml`: XML file that defines properties about the package such as the package name, version numbers, authors, maintainers, and dependencies on other catkin packages
 
 ## How to install and run
-The installation of the two packages contained in this repository is carried out by following these two simple steps:
+The installation of the two packages contained in this repository is carried out by following these simple steps:
 * clone this remote repository in the `src` folder of your ROS workspace with the command:
 ```bash
 $ git clone https://github.com/LaRambla20/Repo04_RT1-assignment2.git
@@ -40,7 +40,7 @@ Finally the last thing to do is to run the GUI node, again by opening another sh
 $ rosrun second_assignment_controller robot_GUI_node
 ```
 ### About the Simulator: stageros node
-After running the simulation node as shown above, a circuit and a robot inside it will appear on the screen. The simulator itself make some topics and services available for the control of the robot. As regards the topics, two of them are mainly used in the proposed solution:
+After running the simulation node as shown above, a circuit and a robot inside it will appear on the screen. The simulator itself makes some topics and services available for the control of the robot. As regards the topics, two of them are mainly used in the proposed solution:
 * `/base_scan`: topic on which the simulation node publishes the output of the robot laser scanners. The type of message sent on this topic is `sensor_msgs/LaserScan` and consists in several fields. Among them, the `ranges` field, which is a vector that contains the distances of the robot from the walls in an angular range from 0 to 180 degrees, will be exploited.
 * `/cmd_vel`: topic to which the simulation node is subscribed in order to receive commands to set the robot linear and angular velocity. The type of message sent on this topic is `geometry_msgs/Twist` and consists in two fields. They both are three dimensional vectors, but one specifies the linear velocity of the robot, the other its angular velocity. Among the elements of these two vectors the x component of the linear vector and the z component of the angular vector will be used in order to guide the robot along the circuit.  
 As for the built-in services of the simulation node instead, only one of them will be taken in consideration:
@@ -239,55 +239,68 @@ while true
 		check if the server related to the "/change_vel" service is up and running
 		fill the request message of the variable "srv1" with the character "s"
 		make the first client call the related service with the variable "srv1"
+		
 		print the server response on the screen
+	
 	else if the the entered command is "d"
 		check if the server related to the "/change_vel" service is up and running
 		fill the request message of the variable "srv1" with the character "d"
 		make the first client call the related service with the variable "srv1"
+		
 		if the response is a warning
 			print the server response on the screen in red
 			assign 0 to the iterations counter related to the linear velocity of the robot
 		else
 			print the server response on the screen in green
 			increment the iterations counter related to the linear velocity of the robot
+	
 	else if the the entered command is "a"
 		check if the server related to the "/change_vel" service is up and running
 		fill the request message of the variable "srv1" with the character "a"
 		make the first client call the related service with the variable "srv1"
+		
 		if the response is a warning
 			print the server response on the screen in red
 			assign 0 to the iterations counter related to the linear velocity of the robot
 		else
 			print the server response on the screen in green
 			decrement the iterations counter related to the linear velocity of the robot
+	
 	else if the the entered command is "c"
 		check if the server related to the "/change_vel" service is up and running
 		fill the request message of the variable "srv1" with the character "c"
 		make the first client call the related service with the variable "srv1"
+		
 		if the response is a warning
 			print the server response on the screen in red
 			assign 0 to the iterations counter related to the angular velocity of the robot
 		else
 			print the server response on the screen in green
 			increment the iterations counter related to the angular velocity of the robot
+	
 	else if the the entered command is "z"
 		check if the server related to the "/change_vel" service is up and running
 		fill the request message of the variable "srv1" with the character "z"
 		make the first client call the related service with the variable "srv1"
+		
 		if the response is a warning
 			print the server response on the screen in red
 			assign 0 to the iterations counter related to the angular velocity of the robot
 		else
 			print the server response on the screen in green
 			decrement the iterations counter related to the angular velocity of the robot
+	
 	else if the the entered command is "r"
 		check if the server related to the "/change_vel" service is up and running
 		fill the request message of the variable "srv1" with the character "r"
 		make the first client call the related service with the variable "srv1"
+		
 		print the server response on the screen
 		assign 0 to both the iterations counters
+		
 		check if the server related to the "/reset_position" service is up and running
 		make the second client call the related service with the variable "srv2"
+	
 	else if the the entered command is "q"
 		exit
 	else
@@ -297,13 +310,10 @@ while true
 		issue a warning message on the screen
 	if the iterations counter related to the angular velocity of the robot is greater than 3
 		issue a warning message on the screen
+
 return
 ```
 
 ## System Limitations and Possible Improvements
-As far as the limitations of the script are concerned, mainly two of them can be found. The first one is that the robot, once it has released a silver token, steps back in order to avoid hitting that token while resetting its orientation. This could be a problem if the grabbed silver token was very close to a golden wall, because, while performing the step back, the robot could collide with that wall. A possible solution could be to check the distance from the golden walls as a priority with respect to the silver tokens detection. In this manner, however, it would be possible that silver blocks that are very close to the walls are not picked up by the robot.  
-Another similiar issue concerns the rotation of the robot once it has grabbed a silver token. According to the script, the robot rotates one way or the other based on its  initial orientation. However, if the grabbed silver token is too close to a golden wall, the robot could, during its rotation, hit the golden blocks. In order to solve this issue a control on the distance from the nearest wall should be performed and the rotation should be carried out according to that check.  
-A possible improvement could be to implement a solution to this problem that does not rely on the fact that the walls are made of separate blocks. Under these circumstances the check on the number of golden blocks around the robot could not be run and the second approach that is here implemented could result in the robot going back. In order to avoid that, the method `R.heading` of the class `Robot` could be used. As a matter of fact, this method could allow the robot to keep track of its orientation and, therefore, to understand when an odd change of orientation occurs.
-
-## System Issues
-No particular issues were found.
+As far as the limitations of the script are concerned, the main one is that, by increasing the velocities too much, the control of the robot might fail. In the proposed solution the GUI node issues a warning message on the screen if at least one of the velocities is too high. Another way to deal with this problem could be to simply not allow the user to increment the velocities once that they reached a certain value.
+As regards the improvements instead, several of them could be carried out. For instance, one of them could be to allow the user to directly specify the desired velocities by means of the GUI node. Another possible improvement could be to
