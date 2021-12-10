@@ -152,6 +152,12 @@ bool obtaincoeffCallback (request message related to the service "/change_vel", 
 The second callback function can be described in pseudocode as follows:
 ```cpp
 void robotCallback(message retrieved by the "/base_scan" topic){
+	divide the "ranges" field of the message in 5 subvectors, one for each region
+	call the "find_minimum" function to retrieve the minimum distance from the walls for each one of the 5 regions
+	print on the screen the obtained minimum distances
+	call the "change_direction" to set the velocities of the robot according to the position of the walls at a dangerous distance and to retrieve the current state and substate
+	print on the screen the obtained state and substate
+	publish on the "/cmd_vel" topic the velocities set by the "change_direction" function call
 }
 ```
 ### "Regular" functions
