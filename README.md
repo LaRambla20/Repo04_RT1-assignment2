@@ -116,7 +116,7 @@ The first callback function can be described in pseudocode as follows:
 bool obtaincoeffCallback (request message related to the service "/change_vel", response message related to the service "/change_vel"){
 	if the request message is the command "s"
 		if both cefficients are 0
-			assign value 1 to both the coefficents
+			assign 1 to both the coefficents
 			fill the response message with "motion started"
 		else
 			fill the response message with a warning
@@ -145,7 +145,7 @@ bool obtaincoeffCallback (request message related to the service "/change_vel", 
 			divide the coefficient related to the angular velocity by 1.2
 			fill the resposne message with "angular velocity decremented"
 	else if the request message is the command "r"
-		assign value 0 to both the coefficents
+		assign 0 to both the coefficents
 		fill the response message with "position and velocity reset"
 }
 ```
@@ -224,12 +224,31 @@ The main function can be described in pseudocode as follows:
 ```cpp
 initialize the node with the name "robot_gui_node"
 setup the NodeHandle
-initialize and define a client that sends requests belonging to the "/change_vel" service
-define a custom service variable of type "ChangeVel" 
-initialize and define a client that sends requests belonging to the "/reset_positions" service
-define a custom service variable of type "Empty" 
+initialize and define a client ("client1") that sends requests belonging to the "/change_vel" service
+define the custom service variable "srv1" of type "ChangeVel" 
+initialize and define a client ("client2") that sends requests belonging to the "/reset_positions" service
+define the service variable "srv2" of type "Empty" 
+initialize an iterations counter related to the linear velocity of the robot to 0
+initialize an iterations counter related to the angular velocity of the robot to 0
 
-print 
+print the instructions to interact with the node on the screen
+while true
+	ask the user for a command
+	retrieve the command entered by the user on the stdin
+	if the the entered command is "s"
+		check if the server related to the "/change_vel" service is up and running
+		fill the request message of the variable "srv1" with the character "s"
+		make the first client call the related service with the variable "srv1"
+		print the server responnse on the screen
+	else if the the entered command is "d"
+		check if the server related to the "/change_vel" service is up and running
+		fill the request message of the variable "srv1" with the character "d"
+		make the first client call the related service with the variable "srv1"
+		if the response is a warning
+			assign 0 to the iterations counter related to the linear velocity of the robot
+		else
+			increment the iterations counter related to the linear velocity of the robot
+
 ```
 
 ## System Limitations and Possible Improvements
