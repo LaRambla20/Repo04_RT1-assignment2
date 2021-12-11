@@ -4,8 +4,7 @@ The folder in which this README is contains two ROS packages, one named `second_
 * `CMakeLists.txt`: text file that describes how to build the code and where to install it to
 * `package.xml`: XML file that defines properties about the package such as the package name, version numbers, authors, maintainers, and dependencies on other catkin packages  
 
-Inside the second package there are instead three folders, a text file and a file with extension .xml:
-* `include`: folder for the management of included packages (not used)
+Inside the second package there are instead two folders, a text file and a file with extension .xml:
 * `src`: folder that contains two C++ scripts (`robot_controller.cpp` and `robot_gui.cpp`) implementing two nodes: one whose aim is to control the robot and to carry out some operations under request; the other whose aim is to interact with the user and to send requests to the first one
 * `srv`: folder that contains a custom ROS service (`ChangeVel.srv`) whose aim is to make the two previously-mentioned nodes communicate
 * `CMakeLists.txt`: text file that describes how to build the code and where to install it to
